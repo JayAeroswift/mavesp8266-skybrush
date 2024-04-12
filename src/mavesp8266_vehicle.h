@@ -44,20 +44,25 @@ class MavESP8266Vehicle : public MavESP8266Bridge {
 public:
     MavESP8266Vehicle();
 
-    void    begin           (MavESP8266Bridge* forwardTo);
+    void    begin           (MavESP8266Bridge* forwardTo, uint8_t system_id = 0, uint8_t component_id = 0);
     void    readMessage     ();
     void    readMessageRaw  ();
     int     sendMessage     (mavlink_message_t* message);
     int     sendMessageRaw   (uint8_t *buffer, int len);
     linkStatus* getStatus   ();
+    bool    isArmed         ();
 
 private:
+    void    _generateFakeHeartbeat();
     bool    _readMessage    ();
     void    _send_pending();
 
 private:
+    bool                    _armed;
     unsigned long           _queue_time;
     mavlink_message_t       _msg;
+    mavlink_message_t       _last_heartbeat_msg;
+    uint32_t                _last_fake_heartbeat_sent_at;
 };
 
 #endif
